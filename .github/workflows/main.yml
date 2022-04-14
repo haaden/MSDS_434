@@ -21,12 +21,13 @@ jobs:
     - name: Format code
       run: |
         make format
-  name: cloudrun-deploy
-on:
-  push:
-    branches:
-      - main
 
+         setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
 
     # Setup gcloud CLI
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
