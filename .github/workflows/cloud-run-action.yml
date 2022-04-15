@@ -27,9 +27,9 @@ jobs:
         run: |
           docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest .
 
-      - name: Push
-        run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest
+      # - name: Push
+      #   run: |
+      #     docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest
 
       - name: Deploy
         run: |
