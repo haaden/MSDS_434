@@ -125,10 +125,7 @@ def sentiment():
 	
 	header= "Hourly and Daily Sentiment of {} Stock".format(ticker)
 	description = """
-	The above chart averages the sentiment scores of {} stock hourly and daily.
-	The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
-	The news headlines are obtained from the FinViz website.
-	Sentiments are given by the nltk.sentiment.vader Python library.
+	
     """.format(ticker)
 	return render_template('sentiment.html',graphJSON_hourly=graphJSON_hourly, graphJSON_daily=graphJSON_daily, header=header,table=parsed_and_scored_news.to_html(classes='data'),description=description)
 
