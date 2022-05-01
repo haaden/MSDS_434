@@ -4,3 +4,8 @@ black==22.3.0
 numpy==1.22.3
 Flask
 gunicorn 
+pandas
+nltk
+urllib3
+bs4
+plotly
