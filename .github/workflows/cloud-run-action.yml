@@ -33,7 +33,7 @@ jobs:
 
       - name: Deploy
         run: |
-          gcloud run deploy helloworld \
+          gcloud run deploy sentiment \
           --region us-central1 \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld \
           --platform managed \
