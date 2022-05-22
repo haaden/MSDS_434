@@ -127,7 +127,7 @@ def sentiment():
 	news_table = get_news(ticker)
 	parsed_news_df = parse_news(news_table)
 	parsed_and_scored_news = score_news(parsed_news_df)
-	fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
+	fig_hourly = plot_daily_sentiment(parsed_and_scored_news, ticker)
 	fig_daily = plot_daily_price(ticker)
 
 	graphJSON_hourly = json.dumps(fig_hourly, cls=plotly.utils.PlotlyJSONEncoder)
