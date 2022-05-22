@@ -14,6 +14,7 @@ import json # for graph plotting in website
 import nltk
 nltk.downloader.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import yfinance as yf
 
 # for extracting data from finviz
 finviz_url = 'https://finviz.com/quote.ashx?t='
@@ -102,6 +103,15 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
     fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily Sentiment Scores')
     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
 
+def plot_daily_price(ticker):
+
+    # Group by date and ticker columns from scored_news and calculate the mean
+    data = yf.download(ticker, period= '1mo')
+
+    # Plot a bar chart with plotly
+    fig = px.line(data, x=data.index, y='Adj Close', title = ticker +' Daily Sentiment Scores')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
 app = Flask(__name__)
 
 
@@ -118,7 +128,7 @@ def sentiment():
 	parsed_news_df = parse_news(news_table)
 	parsed_and_scored_news = score_news(parsed_news_df)
 	fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
-	fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
+	fig_daily = plot_daily_price(ticker)
 
 	graphJSON_hourly = json.dumps(fig_hourly, cls=plotly.utils.PlotlyJSONEncoder)
 	graphJSON_daily = json.dumps(fig_daily, cls=plotly.utils.PlotlyJSONEncoder)
