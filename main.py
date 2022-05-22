@@ -100,7 +100,7 @@ def plot_daily_sentiment(parsed_and_scored_news, ticker):
     mean_scores = parsed_and_scored_news.resample('D').mean()
 
     # Plot a bar chart with plotly
-    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily Sentiment Scores')
+    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily News Sentiment Scores')
     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
 
 def plot_daily_price(ticker):
@@ -109,7 +109,7 @@ def plot_daily_price(ticker):
     data = yf.download(ticker, period= '1mo')
 
     # Plot a bar chart with plotly
-    fig = px.line(data, x=data.index, y='Adj Close', title = ticker +' Daily Sentiment Scores')
+    fig = px.line(data, x=data.index, y='Adj Close', title = ticker +' Daily price')
     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
 
 app = Flask(__name__)
