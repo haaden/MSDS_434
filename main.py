@@ -24,6 +24,37 @@ import re
 import json
 from transformers import pipeline
 from dotenv import load_dotenv
+from google.oauth2 import service_account
+import pandas_gbq
+
+# set bigquery credential 
+
+def gcpcred():
+    KEY_PATH='model-axle-347205-88cb4c07d14e.json'
+
+    CREDS = service_account.Credentials.from_service_account_file(KEY_PATH)
+
+    client = bigquery.Client(credentials=CREDS, project=CREDS.project_id)
+    
+    return client
+
+#get company name form bigquery
+def getbigquerydata(ticker):
+
+    client = gcpcred()
+    Q2 = f"""\
+        SELECT ticker, title \
+        FROM  StockSentiment.compinfo \
+            where ticker = '{ticker}' """
+    compname= pandas_gbq.read_gbq(Q2, project_id=CREDS.project_id, credentials=CREDS)
+
+    compname = compname['title'].to_list()[0]
+
+    return compname
+
+
+
+
 
 load_dotenv()
 # set up tweepy authentication 
@@ -269,6 +300,7 @@ def sentiment():
 
     fig_price_daily_tweet = plot_daily_sentiment_tweet(tweetdf, ticker)
     fig_tweet_daily = plot_daily_price_tweet(ticker, start= tweet_date_min, end = tweet_date_max)
+    company= getbigquerydata(ticker)
 
 
     graphJSON_hourly = json.dumps(fig_news_daily, cls=plotly.utils.PlotlyJSONEncoder)
@@ -276,7 +308,7 @@ def sentiment():
     graphJSON_tweet = json.dumps(fig_price_daily_tweet, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON_price = json.dumps(fig_tweet_daily, cls=plotly.utils.PlotlyJSONEncoder)
 
-    header= "Daily Sentiment of {} Stock".format(ticker)
+    header= "Daily Sentiment of {company} : {ticker} Stock".format(ticker)
     description = """
     News for {}
 
