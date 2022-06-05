@@ -25,7 +25,7 @@ jobs:
           echo api_key: ${{ secrets.API_KEY }} >> .env
           echo api_secret_key: ${{ secrets.API_SECRET_KEY }} >> .env
           echo access_token: ${{ secrets.ACCESS_TOKEN }} >> .env
-          secret_access_token: ${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
+          echo secret_access_token: ${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
           cat .env
           touch model-axle-347205-88cb4c07d14e.json
           echo ${{ secrets.CREDS }} >> model-axle-347205-88cb4c07d14e.json
