@@ -19,17 +19,19 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - name: .env gcpcred
+      - name: .env 
         run: |
           touch .env
-          echo api_key: ${{ secrets.API_KEY }} >> .env
-          echo api_secret_key: ${{ secrets.API_SECRET_KEY }} >> .env
-          echo access_token: ${{ secrets.ACCESS_TOKEN }} >> .env
-          echo secret_access_token: ${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
-          cat .env
-          touch model-axle-347205-88cb4c07d14e.json
-          echo ${{ secrets.CREDS }} >> model-axle-347205-88cb4c07d14e.json
-          cat model-axle-347205-88cb4c07d14e.json 
+          echo api_key=${{ secrets.API_KEY }} >> .env
+          echo api_secret_key=${{ secrets.API_SECRET_KEY }} >> .env
+          echo access_token=${{ secrets.ACCESS_TOKEN }} >> .env
+          echo secret_access_token=${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
+
+      - name: gcpcred
+        run: |    
+          touch model-axle-347205-88cb4c07d14e
+          echo ${{ secrets.CREDS }} >> model-axle-347205-88cb4c07d14e
+           
 
       - name: Configure Docker
         run: |
