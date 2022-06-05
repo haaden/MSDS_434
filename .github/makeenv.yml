@@ -17,6 +17,6 @@ jobs:
         api_secret_key: ${{ secrets.API_SECRET_KEY }}
         access_token: ${{ secrets.ACCESS_TOKEN }}
         secret_access_token: ${{ secrets.SECRET_ACCESS_TOKEN }}
-        directory: <.>
+        
         file_name: .env
         fail_on_empty: false
