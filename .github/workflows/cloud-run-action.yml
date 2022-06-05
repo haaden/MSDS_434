@@ -26,11 +26,13 @@ jobs:
           echo api_secret_key=${{ secrets.API_SECRET_KEY }} >> .env
           echo access_token=${{ secrets.ACCESS_TOKEN }} >> .env
           echo secret_access_token=${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
+          cat .env
 
       - name: gcpcred
         run: |    
-          touch model-axle-347205-88cb4c07d14e
-          echo {${{ secrets.CREDS }}} >> model-axle-347205-88cb4c07d14e
+          touch model
+          echo ${{ secrets.CREDS }} >> model
+
            
 
       - name: Configure Docker
