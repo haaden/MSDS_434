@@ -22,7 +22,7 @@ jobs:
       - name: gcpcred
         run: |    
           touch model
-          echo "${{ secrets.CREDS }}" | jq >> model
+          echo '${{ secrets.CREDS }}' >> model
           cat model
           ls 
       - name: .env 
