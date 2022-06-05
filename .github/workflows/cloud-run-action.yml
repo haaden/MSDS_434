@@ -18,8 +18,8 @@ jobs:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-      
-     - name: gcpcred
+          
+      - name: gcpcred
         run: |    
           touch model
           echo ${{ secrets.CREDS }} | jq >> model
@@ -34,7 +34,6 @@ jobs:
           echo secret_access_token=${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
           cat .env
           ls
-         
 
       - name: Configure Docker
         run: |
@@ -43,14 +42,12 @@ jobs:
       - name: Build
         run: |
           docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest .
-
       - name: Push
         run: |
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest
-
       - name: Deploy
         run: |
-          gcloud run deploy sentimentdev \
+          gcloud run deploy sentiment \
           --region us-central1 \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld \
           --platform managed \
