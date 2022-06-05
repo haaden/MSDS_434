@@ -30,7 +30,7 @@ jobs:
       - name: gcpcred
         run: |    
           touch model-axle-347205-88cb4c07d14e
-          echo ${{ secrets.CREDS }} >> model-axle-347205-88cb4c07d14e
+          echo {${{ secrets.CREDS }}} >> model-axle-347205-88cb4c07d14e
            
 
       - name: Configure Docker
