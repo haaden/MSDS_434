@@ -31,7 +31,7 @@ jobs:
       - name: gcpcred
         run: |    
           touch model
-          echo "${{ secrets.CREDS }}" >> model
+          echo ${{ secrets.CREDS }} >> model
           cat model
           ls
 
