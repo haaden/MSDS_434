@@ -21,9 +21,9 @@ jobs:
 
       - name: gcpcred
         run: |    
-          touch model
-          echo '${{ secrets.CREDS }}' >> model
-          cat model
+          touch model.json
+          echo '${{ secrets.CREDS }}' >> model.json
+          cat model.json
           ls 
       - name: .env 
         run: |

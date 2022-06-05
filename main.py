@@ -31,7 +31,7 @@ import pandas_gbq
 # set bigquery credential 
 
 def gcpcred():
-    KEY_PATH='model'
+    KEY_PATH='model.json'
 
     CREDS = service_account.Credentials.from_service_account_file(KEY_PATH)
 
