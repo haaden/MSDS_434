@@ -2,7 +2,7 @@
 <html>
 <style>
 		body            { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;}
-		a, h1, h2       { color: #f9f9f9; }
+		a, h1, h2       { color: #000000; }
 		h1, h2          { margin: 0; }
 		h1              { border-bottom: 2px solid #eee; }
 		h2              { font-size: 1.2em; }
@@ -22,100 +22,7 @@
 			width: 80%;
 		}
 
-		.button {
-		  background-color: #6fa146; /* Green */
-		  border: none;
-		  color: white;
-		  padding: 15px 32px;
-		  text-align: center;
-		  text-decoration: none;
-		  display: inline-block;
-		  font-size: 16px;
-		}
-
-		.result {
-			margin: auto;
-			width: 80%;
-			border: 1px solid #f0f;
-		}
-
-		input[type=text] {
-		   height: 50px;
-		   font-size:24px;
-		}
-
-		body {
-			background-color:rgb(255, 255, 255);
-		} 
-
-		.push_button {
-			position: relative;
-			width:220px;
-			height:40px;
-			text-align:center;
-			color:#FFF;
-			text-decoration:none;
-			line-height:43px;
-			font-family:'Oswald', Helvetica;
-			display: block;
-			margin: 30px;
-		}
-		.push_button:before {
-			background:#f0f0f0;
-			background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#D0D0D0), to(#f0f0f0));
-			
-			-webkit-border-radius:5px;
-			-moz-border-radius:5px;
-			border-radius:5px;
-			
-			-webkit-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-			-moz-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-			box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF;
-			
-			position: relative;
-			content: "";
-			left: -6px; right: -6px;
-			top: -6px; bottom: -10px;
-			z-index: -1;
-		}
-
-		.push_button:active {
-			-webkit-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset;
-			top:5px;
-		}
-		.push_button:active:before{
-			top: -11px;
-			bottom: -5px;
-			content: "";
-		}
-
-		.blue {
-			text-shadow:-1px -1px 0 #ffffff;
-			background: #ffffff;
-			border:1px solid #ffffff;
-			background-image:-webkit-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-moz-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-ms-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-o-linear-gradient(top, #ffffff, #ffffff);
-			background-image:linear-gradient(top, #ffffff, #ffffff);
-			
-			-webkit-border-radius:5px;
-			-moz-border-radius:5px;
-			border-radius:5px;
-			
-			-webkit-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #338A94, 0 4px 2px rgba(0, 0, 0, .5);
-			-moz-box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #338A94, 0 4px 2px rgba(0, 0, 0, .5);
-			box-shadow:0 1px 0 rgba(255, 255, 255, .5) inset, 0 -1px 0 rgba(255, 255, 255, .1) inset, 0 4px 0 #338A94, 0 4px 2px rgba(0, 0, 0, .5);
-		}
-
-		.blue:hover {
-			background: #ffffff;
-			background-image:-webkit-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-moz-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-ms-linear-gradient(top, #ffffff, #ffffff);
-			background-image:-o-linear-gradient(top, #ffffff, #ffffff);
-			background-image:linear-gradient(top, #ffffff, #ffffff);
-		}
+		
 	</style>
 	
 	<head>
@@ -127,11 +34,32 @@
 		<center><h4><a href="/">Go back and enter another ticker</a></h4></center>
 		<div id="chart" class="chart"></div>
 		<div id="chart2" class="chart2"></div>
+		<div id="chart3" class="chart3"></div>
+		<div id="chart4" class="chart4"></div>
 		<br><br>  
 		<center>
-		<div>{{description}}</div>
-		<br><br>	
-		{{ table|safe }}
+			<h2> News Sentiment Table </h2>	
+		</center>
+		
+		<br><br>
+		<center>
+			{{description}}
+		</center>
+		<br><br>
+		<center>
+			{{ table|safe }}
+		</center>
+		<br><br>
+		<center>
+			<h2> Twitter Sentiment Table </h2>
+		</center>
+		<br><br>
+		<center>
+			{{descriptionT}}
+		</center>
+		<br><br>
+		<center>
+			{{ table1|safe }}
 		</center>
 	</body>
 
@@ -140,7 +68,11 @@
 		var graph_hourly = {{graphJSON_hourly | safe}};
 		Plotly.plot('chart',graph_hourly,{}); 
 		var graph_daily = {{graphJSON_daily | safe}};  
-		Plotly.newPlot('chart2',graph_daily,{});   	
+		Plotly.newPlot('chart2',graph_daily,{}); 
+		var graph_tweet = {{graphJSON_tweet | safe}};  
+		Plotly.newPlot('chart3',graph_tweet,{});   
+		var graph_price = {{graphJSON_price | safe}};  
+		Plotly.newPlot('chart4',graph_price,{}); 	
 	</script>
 
 </html>
