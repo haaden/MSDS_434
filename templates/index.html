@@ -29,14 +29,15 @@
 		  padding: 15px 32px;
 		  text-align: center;
 		  text-decoration: none;
-		  display: inline-block;
+		  display: block;
 		  font-size: 16px;
+		
 		}
 
 		.result {
 			margin: auto;
 			width: 80%;
-			border: 1px solid #f0f;
+			border: 1px solid rgb(255, 255, 255);
 		}
 
 		input[type=text] {
@@ -62,16 +63,16 @@
 			margin: 30px;
 		}
 		.push_button:before {
-			background:#f0f0f0;
-			background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#D0D0D0), to(#f0f0f0));
+			background:#ffffff;
+			background-image:-webkit-gradient(linear, 0% 0%, 0% 0%, from(#ffffff), to(#ffffff));
 			
 			-webkit-border-radius:5px;
 			-moz-border-radius:5px;
 			border-radius:5px;
 			
-			-webkit-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-			-moz-box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF; 
-			box-shadow:0 1px 2px rgba(0, 0, 0, .5) inset, 0 1px 0 #FFF;
+			-webkit-box-shadow:0 1px 2px rgb(255, 255, 255) inset, 0 1px 0 #FFF; 
+			-moz-box-shadow:0 1px 2px rgb(255, 255, 255) inset, 0 1px 0 #FFF; 
+			box-shadow:0 1px 2px rgb(255, 255, 255) inset, 0 1px 0 #FFF;
 			
 			position: relative;
 			content: "";
@@ -104,9 +105,9 @@
 			-moz-border-radius:5px;
 			border-radius:5px;
 			
-			-webkit-box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(0, 0, 0, .5);
-			-moz-box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(0, 0, 0, .5);
-			box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(0, 0, 0, .5);
+			-webkit-box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(255, 255, 255, 0.5);
+			-moz-box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(255, 255, 255, 0.5);
+			box-shadow:0 1px 0 rgba(255, 255, 255, 255) inset, 0 -1px 0 rgba(255, 255, 255, 255) inset, 0 4px 0 #ffffff, 0 4px 2px rgba(255, 255, 255, 0.5);
 		}
 
 		.blue:hover {
@@ -117,15 +118,17 @@
 			background-image:-o-linear-gradient(top, #ffffff, #ffffff);
 			background-image:linear-gradient(top, #ffffff, #ffffff);
 		}
+
+	
 	</style>
 	
 	<head>
-		<title>Stock Sentiment Analyzer</title>
+		<title>Stock Sentiment Analyzer Dev</title>
 	</head>
 	
 	<body style="font-family:arial, sans-serif", style="width: 70%">
 		<center>
-			<h1 style="padding:10px">Stock Sentiment Analyzer</h1>
+			<h1 style="padding:10px">Stock Sentiment Analyzer Dev</h1>
 			
 			<h3>Enter a Stock Ticker Symbol </h3>
 
@@ -133,7 +136,7 @@
 						
 					<b>Stock Ticker Symbol: </b>	
 					<input id="text_field" name="ticker" type="text" required> 				
-					<center><input id="submit_button" type="Submit" class="push_button blue"></center>
+					<center><input id="submit_button" type="Submit" class="push_button"></center>
 					
 				</form>
 			<p>
