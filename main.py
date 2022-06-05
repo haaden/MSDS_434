@@ -25,6 +25,7 @@ import json
 from transformers import pipeline
 from dotenv import load_dotenv
 from google.oauth2 import service_account
+from google.cloud import bigquery
 import pandas_gbq
 
 # set bigquery credential 
