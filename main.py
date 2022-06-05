@@ -132,10 +132,10 @@ def get_tweet_sentiment(ticker):
     tweetdf['label']= label
     tweetdf['score']= score
 
-    tweetdf.date = tweetdf.date.astype('datetime64[ns]','%Y%m%d')
+    
     tweet_date_min = tweetdf['date'].min()
     tweet_date_max = tweetdf['date'].max()
-    
+    tweetdf.date = tweetdf.date.astype('datetime64[ns]','%Y%m%d')
 
     return tweetdf,tweet_date_min,tweet_date_max
 
