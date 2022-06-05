@@ -9,8 +9,8 @@ ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
-COPY . ./usr/bin/bash/.env 
-COPY . ./usr/bin/bash/.model
+COPY /usr/bin/bash/.env 
+COPY /usr/bin/bash/model
 # Install production dependencies.
 RUN make install
 
