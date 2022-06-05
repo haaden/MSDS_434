@@ -19,9 +19,10 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
       
-      with:
-        name: "model"
-        json: ${{ secrets.MY_JSON }}
+     -name: gcpjson 
+        with:
+          name: "model"
+          json: ${{ secrets.MY_JSON }}
 
       - name: .env 
         run: |
