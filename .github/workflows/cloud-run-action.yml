@@ -47,7 +47,7 @@ jobs:
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld:latest
       - name: Deploy
         run: |
-          gcloud run deploy sentiment \
+          gcloud run deploy sentimentdev \
           --region us-central1 \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/helloworld \
           --platform managed \
