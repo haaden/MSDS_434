@@ -18,11 +18,11 @@ jobs:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-          
+
       - name: gcpcred
         run: |    
           touch model
-          echo ${{ secrets.CREDS }} | jq >> model
+          echo "${{ secrets.CREDS }}" | jq >> model
           cat model
           ls 
       - name: .env 
