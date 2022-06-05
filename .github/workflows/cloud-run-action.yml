@@ -18,6 +18,10 @@ jobs:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
+      
+      with:
+        name: "model"
+        json: ${{ secrets.MY_JSON }}
 
       - name: .env 
         run: |
@@ -27,15 +31,8 @@ jobs:
           echo access_token=${{ secrets.ACCESS_TOKEN }} >> .env
           echo secret_access_token=${{ secrets.SECRET_ACCESS_TOKEN }} >> .env
           cat .env
-
-      - name: gcpcred
-        run: |    
-          touch model
-          echo ${{ secrets.CREDS }} >> model
-          cat model
           ls
-
-           
+         
 
       - name: Configure Docker
         run: |
