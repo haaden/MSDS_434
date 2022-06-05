@@ -37,21 +37,22 @@ def gcpcred():
 
     client = bigquery.Client(credentials=CREDS, project=CREDS.project_id)
     
-    return client
+    return client, CREDS
 
 #get company name form bigquery
 def getbigquerydata(ticker):
 
-    client = gcpcred()
+    client, CREDS = gcpcred()
     Q2 = f"""\
-        SELECT ticker, title \
+        SELECT ticker, title, cik_str \
         FROM  StockSentiment.compinfo \
             where ticker = '{ticker}' """
     compname= pandas_gbq.read_gbq(Q2, project_id=CREDS.project_id, credentials=CREDS)
 
-    compname = compname['title'].to_list()[0]
-
-    return compname
+    company = compname['title'].to_list()[0]
+    cik = compname['cik_str'].to_list()[0]
+   
+    return company, cik
 
 
 
@@ -301,7 +302,7 @@ def sentiment():
 
     fig_price_daily_tweet = plot_daily_sentiment_tweet(tweetdf, ticker)
     fig_tweet_daily = plot_daily_price_tweet(ticker, start= tweet_date_min, end = tweet_date_max)
-    company= getbigquerydata(ticker)
+    company, cik= getbigquerydata(ticker)
 
 
     graphJSON_hourly = json.dumps(fig_news_daily, cls=plotly.utils.PlotlyJSONEncoder)
@@ -309,16 +310,16 @@ def sentiment():
     graphJSON_tweet = json.dumps(fig_price_daily_tweet, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON_price = json.dumps(fig_tweet_daily, cls=plotly.utils.PlotlyJSONEncoder)
 
-    header= f"Daily Sentiment of {company} : {ticker} Stock"
+    header= f"Daily Sentiment of {company} : {ticker} : CIK: {cik}"
     description = """
     News for {}
 
-    """.format(ticker)
+    """.format(company)
 
     descriptionT = """
     Tweets for {}
 
-    """.format(ticker)
+    """.format(company)
     return render_template('sentiment.html',graphJSON_hourly=graphJSON_hourly, graphJSON_daily=graphJSON_daily,graphJSON_tweet=graphJSON_tweet,graphJSON_price=graphJSON_price,
      header=header,table=parsed_and_scored_news.to_html(classes='data'),description=description,
     table1=tweetdf.to_html(classes='data'),descriptionT=descriptionT

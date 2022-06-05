@@ -16,3 +16,7 @@ transformers[sentencepiece]
 tweepy
 torch
 TensorFlow
+google-cloud-bigquery
+google.cloud
+pandas-gbq
+
