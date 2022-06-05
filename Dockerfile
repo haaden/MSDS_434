@@ -9,9 +9,10 @@ ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
-
+COPY . ./usr/bin/bash/.env 
+COPY . ./usr/bin/bash/.model
 # Install production dependencies.
-RUN pip install -r requirements.txt
+RUN make install
 
 EXPOSE 8080
 
