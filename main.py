@@ -30,7 +30,7 @@ import pandas_gbq
 # set bigquery credential 
 
 def gcpcred():
-    KEY_PATH='model-axle-347205-88cb4c07d14e.json'
+    KEY_PATH='model-axle-347205-88cb4c07d14e'
 
     CREDS = service_account.Credentials.from_service_account_file(KEY_PATH)
 
@@ -308,7 +308,7 @@ def sentiment():
     graphJSON_tweet = json.dumps(fig_price_daily_tweet, cls=plotly.utils.PlotlyJSONEncoder)
     graphJSON_price = json.dumps(fig_tweet_daily, cls=plotly.utils.PlotlyJSONEncoder)
 
-    header= "Daily Sentiment of {company} : {ticker} Stock".format(ticker)
+    header= f"Daily Sentiment of {company} : {ticker} Stock"
     description = """
     News for {}
 
