@@ -1,5 +1,5 @@
 # MSDS_434
- Analytics Application 
+# Stock Sentiment Analyzer 
 
 [![Python application test with Github Actions](https://github.com/haaden/MSDS_434/actions/workflows/main.yml/badge.svg)](https://github.com/haaden/MSDS_434/actions/workflows/main.yml)
 
@@ -80,3 +80,7 @@ BigQuery  stored Sec.gov  Company identification data such as Name, CIK and Tick
 ## Demo
 
 ![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/19863921/172090275-cd17c42e-3d9a-4635-aac7-52a4861aaf42.gif)
+
+### App URL
+
+https://sentimentdev-kxd2g42gpa-uc.a.run.app
