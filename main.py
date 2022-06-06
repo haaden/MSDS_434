@@ -9,11 +9,135 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import plotly
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import json # for graph plotting in website
 # NLTK VADER for sentiment analysis
 import nltk
+from yaml import load
 nltk.downloader.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import yfinance as yf
+import datetime
+import tweepy
+import re
+import json
+from transformers import pipeline
+from dotenv import load_dotenv
+from google.oauth2 import service_account
+from google.cloud import bigquery
+import pandas_gbq
+
+# set bigquery credential 
+
+def gcpcred():
+    KEY_PATH='model.json'
+
+    CREDS = service_account.Credentials.from_service_account_file(KEY_PATH)
+
+    client = bigquery.Client(credentials=CREDS, project=CREDS.project_id)
+    
+    return client, CREDS
+
+#get company name form bigquery
+def getbigquerydata(ticker):
+
+    client, CREDS = gcpcred()
+    Q2 = f"""\
+        SELECT ticker, title, cik_str \
+        FROM  StockSentiment.compinfo \
+            where ticker = '{ticker}' """
+    compname= pandas_gbq.read_gbq(Q2, project_id=CREDS.project_id, credentials=CREDS)
+
+    company = compname['title'].to_list()[0]
+    cik = compname['cik_str'].to_list()[0]
+   
+    return company, cik
+
+
+
+
+
+load_dotenv()
+# set up tweepy authentication 
+def tweepyauth():
+    auth = tweepy.OAuth1UserHandler(os.getenv('api_key'), os.getenv('api_secret_key'))
+
+    auth.set_access_token(os.getenv('access_token'), os.getenv('secret_access_token'))
+
+    api = tweepy.API(auth, wait_on_rate_limit=True)
+
+    #api.verify_credentials()
+
+    try:
+        api.verify_credentials()
+        print ("cred ok")
+    except:
+        print("cred not working")
+    
+    return api
+
+
+
+# parsing function to extract other relevant attributes from the json list and make  customised dictionary
+
+def parse_tweets(status):
+    parsedTweets = []
+    for tweet in status:
+
+
+        if 'full_text' in tweet._json:
+            full_text = tweet._json['full_text']
+        else:
+            full_text = tweet._json['text']
+
+        mydict = { "tweet_id": tweet._json["id_str"],
+                       "date":tweet._json["created_at"],
+                       "full_text": full_text,                    
+                       "hyperlink": "https://twitter.com/twitter/status/" + tweet._json["id_str"]
+              }
+        parsedTweets.append(mydict) # Add Tweet to parsedTweets list
+    return parsedTweets
+
+
+
+
+def get_tweetdf(ticker):
+    api = tweepyauth()
+    # setupkeywords
+    keywords= f'"{ticker}" "STOCK"'
+   
+    #https://twittercommunity.com/t/correct-syntax-for-an-exact-phrase-match-and-keyword-query/124617
+    status = tweepy.Cursor(api.search_tweets,q = keywords, lang ='en', result_type= 'mixed', tweet_mode='extended', 
+                          count=100).items(300)
+    parsedTweets = parse_tweets(status)
+
+    tweetdf = pd.DataFrame(parsedTweets)
+    return tweetdf
+
+#setting up hugging face model
+model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+
+def get_tweet_sentiment(ticker):
+    tweetdf = get_tweetdf(ticker)
+    
+    label = []
+    score= []
+    for i in tweetdf['full_text'].to_list():
+        sentiment = sentiment_task(i)[0]
+        #print(sentiment)
+        label.append(sentiment['label'])
+        score.append(sentiment['score'])
+    tweetdf['label']= label
+    tweetdf['score']= score
+
+    tweetdf.date = tweetdf.date.astype('datetime64[ns]','%Y%m%d')
+    tweet_date_min = tweetdf['date'].min()
+    tweet_date_max = tweetdf['date'].max()
+    
+
+    return tweetdf,tweet_date_min,tweet_date_max
 
 # for extracting data from finviz
 finviz_url = 'https://finviz.com/quote.ashx?t='
@@ -59,8 +183,13 @@ def parse_news(news_table):
         
         # Create a pandas datetime object from the strings in 'date' and 'time' column
         parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
+
+        # get max and min date for yfinance 
+        news_date_min = parsed_news_df['datetime'].min()
+        news_date_max = parsed_news_df['datetime'].max()
+
         
-    return parsed_news_df
+    return parsed_news_df, news_date_min, news_date_max
         
 def score_news(parsed_news_df):
     # Instantiate the sentiment intensity analyzer
@@ -84,22 +213,61 @@ def score_news(parsed_news_df):
 
     return parsed_and_scored_news
 
-def plot_hourly_sentiment(parsed_and_scored_news, ticker):
+# def plot_hourly_sentiment(parsed_and_scored_news, ticker):
    
-    # Group by date and ticker columns from scored_news and calculate the mean
-    mean_scores = parsed_and_scored_news.resample('H').mean()
+#     # Group by date and ticker columns from scored_news and calculate the mean
+#     mean_scores = parsed_and_scored_news.resample('H').mean()
 
-    # Plot a bar chart with plotly
-    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Hourly Sentiment Scores')
-    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+#     # Plot a bar chart with plotly
+#     fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Hourly Sentiment Scores')
+#     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
 
 def plot_daily_sentiment(parsed_and_scored_news, ticker):
+
    
     # Group by date and ticker columns from scored_news and calculate the mean
+
     mean_scores = parsed_and_scored_news.resample('D').mean()
 
     # Plot a bar chart with plotly
-    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily Sentiment Scores')
+    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily News Sentiment Scores')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
+
+def plot_daily_price(ticker, start= datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d'), \
+     end = (datetime.datetime.now(datetime.timezone.utc)- datetime.timedelta(days=30)).strftime('%Y%m%d%H%M')):
+   
+   
+    # Group by date and ticker columns from scored_news and calculate the mean
+    data = yf.download(ticker, start ,end )
+    # data =pd.data
+
+    # Plot a bar chart with plotly
+    fig = px.line(data, x=data.index, y='Adj Close', title = ticker +' Daily price')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
+def plot_daily_sentiment_tweet(tweetdf, ticker):
+
+           
+    # Group by date and ticker columns from scored_news and calculate the mean
+
+    tweetdf_scores = tweetdf.resample('D').mean()
+
+    # Plot a bar chart with plotly
+    fig = px.bar(tweetdf_scores, x=tweetdf_scores.index, y='score', title = ticker + ' Daily twitter Sentiment Scores')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
+
+def plot_daily_price_tweet(ticker, start= datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d'), \
+     end = (datetime.datetime.now(datetime.timezone.utc)- datetime.timedelta(days=7)).strftime('%Y%m%d')):
+   
+   
+    # Group by date and ticker columns from scored_news and calculate the mean
+    data = yf.download(ticker, start ,end )
+    # data =pd.data
+
+    # Plot a bar chart with plotly
+    fig = px.line(data, x=data.index, y='Adj Close', title = ticker +' Daily price')
     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
 
 app = Flask(__name__)
@@ -112,22 +280,50 @@ def index():
 
 @app.route('/sentiment', methods = ['POST'])
 def sentiment():
+    #set up variable for get_twwet_sentiment()
+   
+    ticker = flask.request.form['ticker'].upper()
 
-	ticker = flask.request.form['ticker'].upper()
-	news_table = get_news(ticker)
-	parsed_news_df = parse_news(news_table)
-	parsed_and_scored_news = score_news(parsed_news_df)
-	fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, ticker)
-	fig_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
+    tweetdf,tweet_date_min,tweet_date_max = get_tweet_sentiment(ticker)
+    tweetdf = tweetdf[['date', 'full_text', 'label', 'score']]
+    tweetdf.loc[tweetdf['label']=='Neutral', 'score']*=0.1
+    tweetdf.loc[tweetdf['label']=='Negative', 'score']*=-1
+    tweetdf.loc[tweetdf['label']=='Positive', 'score']*=1
+    tweetdf = tweetdf.set_index('date')
 
-	graphJSON_hourly = json.dumps(fig_hourly, cls=plotly.utils.PlotlyJSONEncoder)
-	graphJSON_daily = json.dumps(fig_daily, cls=plotly.utils.PlotlyJSONEncoder)
-	
-	header= "Hourly and Daily Sentiment of {} Stock".format(ticker)
-	description = """
-	
-    """.format(ticker)
-	return render_template('sentiment.html',graphJSON_hourly=graphJSON_hourly, graphJSON_daily=graphJSON_daily, header=header,table=parsed_and_scored_news.to_html(classes='data'),description=description)
+    
+    news_table = get_news(ticker)
+    parsed_news_df, news_date_min, news_date_max = parse_news(news_table)
+    parsed_and_scored_news = score_news(parsed_news_df)
+    fig_news_daily = plot_daily_sentiment(parsed_and_scored_news, ticker)
+    fig_price_daily = plot_daily_price(ticker, start= news_date_min, end = news_date_max)
+    
+
+
+    fig_price_daily_tweet = plot_daily_sentiment_tweet(tweetdf, ticker)
+    fig_tweet_daily = plot_daily_price_tweet(ticker, start= tweet_date_min, end = tweet_date_max)
+    company, cik= getbigquerydata(ticker)
+
+
+    graphJSON_hourly = json.dumps(fig_news_daily, cls=plotly.utils.PlotlyJSONEncoder)
+    graphJSON_daily = json.dumps(fig_price_daily, cls=plotly.utils.PlotlyJSONEncoder)
+    graphJSON_tweet = json.dumps(fig_price_daily_tweet, cls=plotly.utils.PlotlyJSONEncoder)
+    graphJSON_price = json.dumps(fig_tweet_daily, cls=plotly.utils.PlotlyJSONEncoder)
+
+    header= f"Daily Sentiment of {company} : {ticker} : CIK: {cik}"
+    description = """
+    News for {}
+
+    """.format(company)
+
+    descriptionT = """
+    Tweets for {}
+
+    """.format(company)
+    return render_template('sentiment.html',graphJSON_hourly=graphJSON_hourly, graphJSON_daily=graphJSON_daily,graphJSON_tweet=graphJSON_tweet,graphJSON_price=graphJSON_price,
+     header=header,table=parsed_and_scored_news.to_html(classes='data'),description=description,
+    table1=tweetdf.to_html(classes='data'),descriptionT=descriptionT
+     )
 
 
 
@@ -138,4 +334,5 @@ def sentiment():
 
 
 if __name__ == "__main__":
+    # tweepyauth()
     app.run(debug=True ,port=8080, host='0.0.0.0')

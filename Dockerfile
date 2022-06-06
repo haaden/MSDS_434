@@ -11,7 +11,7 @@ WORKDIR $APP_HOME
 COPY . ./
 
 # Install production dependencies.
-RUN pip install -r requirements.txt
+RUN make install
 
 EXPOSE 8080
 
