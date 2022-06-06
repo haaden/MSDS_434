@@ -55,12 +55,18 @@ Deploy App container on Google Cloud Run (production and test environment).
 
 -	Flask: Flask operates as the central point of data flow within the app . It serves out
 an interactive website where users can submit a Stock symbol get price and Sentiment data and charts.
+
 -	Git/Github: Development branch on Git stored commits to the dev build of the app.
 Once a working version was developed and tested via Pytest, the dev branch was merged with the main branch and pushed to GitHub.
+
 -	Github Actions: was used to incorporate continuous integration into the project. Anytime code was pushed to the  GitHub repository, Github actions would be triggered to build and test the newest version of the app before deploying to Google App Engine.
+
 -	BigQuery: was used to save company Name, CIK and Ticker symbol data from SEC and this data queries by the app to produce company profile data.
--	Google Cloud Run: Cloud run is a fully managed compute platform that automatically scales containers was used to deploy Flask app container, which is ask for user to provide a Stock symbol and return recent Price , news and news sentiment, tweets and tweet sentiment. 
+
+-	Google Cloud Run: Cloud run is a fully managed compute platform that automatically scales containers was used to deploy Flask app container, which is ask for user to provide a Stock symbol and return recent Price , news and news sentiment, tweets and tweet sentiment.
+ 
 -	Hugging Face and NLTK model:  NLTK sentiment Vader pretrained model was used to get sentiment scores for news and a pretrained hugging face model cardiffnlp/twitter-xlm-roberta-base-sentiment was used to get sentiment scores for Twitter data.
+
 -	Google Cloud Monitoring: Cloud monitoring provides logging of any errors that may occur. Cloud monitoring was also used to set uptime checks.
 
 
