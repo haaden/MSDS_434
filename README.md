@@ -5,14 +5,16 @@
 
 ## Stock Sentiment Analyzer app overview
 
-The purpose of this project was to create Stock Price and Sentiment analyzer app that could be deployed via a CI/CD pipeline and hosted on Google Cloud Platform (GCP) via Google Cloud run. The app produces a time series visual of Stock price , News sentiment and Twitter sentiment and provide a table of recent News and Tweets with Sentiment scores. 
-The stock price is acquired through yahoo finance API using the python library. News is acquired by web scraping finviz.com, Tweets by using  the twitter API and Company CIK and name information is acquired from sec and saved on BigQeury and then sources it in the APP.
+The purpose of this project was to create Stock Price and Sentiment analyzer app that could be deployed via a CI/CD pipeline and hosted on Google Cloud Platform (GCP) via Google Cloud run. The app produces a time series visual of Stock price , News sentiment and Twitter sentiment and provide a table of recent News and Tweets with Sentiment scores.<br>
+<br>
+The stock price is acquired through yahoo finance API using the python library. News is acquired by web scraping finviz.com, Tweets by using  the twitter API and Company CIK and name information is acquired from sec and saved on BigQeury and then sources it in the APP.<br>
+<br>
 The project is based in Flask app and used Plotly to visual using plotly as well as learn about the platform. Yaml file, main.py, Templated and Docker  file are used to get the app to work on Google Cloud run.
 
 
 ## Architecture Diagram
 
-Data source Yahoo, finviz.com, twitter and SEC . 
+Data source Yahoo, finviz.com, twitter and SEC. 
 
 Github to save source code.
 
@@ -64,10 +66,10 @@ Once a working version was developed and tested via Pytest, the dev branch was m
 
 ## Data Source
 
-Python YFinance library to get Stock prices.
-Finviz.com for web scraping Stock news data.
-Twitter API to get Twitter data based on key word search.
-BigQuery  stored Sec.gov  Company identification data such as Name, CIK and Ticker symbol.
+- Python YFinance library to get Stock prices.
+- Finviz.com for web scraping Stock news data.
+- Twitter API to get Twitter data based on key word search.
+- BigQuery  stored Sec.gov  Company identification data such as Name, CIK and Ticker symbol.
 
 ## Future Enhancements
 
