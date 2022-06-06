@@ -13,11 +13,15 @@ The project is based in Flask app and used Plotly to visual using plotly as well
 ## Architecture Diagram
 
 Data source Yahoo, finviz.com, twitter and SEC . 
+
 Github to save source code.
+
 Github Action for continuous integration and delivery.
+
 Deploy App container on Google Cloud Run (production and test environment).
 
- 
+ ![Architecure](https://user-images.githubusercontent.com/19863921/172090604-5b41f72f-454d-4165-a400-3e7288b58447.jpg)
+
 
 
 ## Folder Structure
