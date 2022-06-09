@@ -22,11 +22,25 @@ import datetime
 import tweepy
 import re
 import json
-from transformers import pipeline
+from ModelHF import hugmodel
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from google.cloud import bigquery
 import pandas_gbq
+
+sentiment_task = hugmodel()
+load_dotenv()
+
+#setting up hugging face model
+# def hugmodel():
+
+#     model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+#     sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+    # return sentiment_task
+
+# sentiment_task = hugmodel()
+
+
 
 # set bigquery credential 
 
@@ -58,7 +72,7 @@ def getbigquerydata(ticker):
 
 
 
-load_dotenv()
+
 # set up tweepy authentication 
 def tweepyauth():
     auth = tweepy.OAuth1UserHandler(os.getenv('api_key'), os.getenv('api_secret_key'))
@@ -115,28 +129,43 @@ def get_tweetdf(ticker):
     tweetdf = pd.DataFrame(parsedTweets)
     return tweetdf
 
-#setting up hugging face model
-model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-sentiment_task = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+
+
+# def get_tweet_sentiment(ticker, sentiment_task):
+#     tweetdf = get_tweetdf(ticker)
+    
+#     label = []
+#     score= []
+#     for i in tweetdf['full_text'].to_list():
+#         sentiment = sentiment_task(i)[0]
+#         #print(sentiment)
+#         label.append(sentiment['label'])
+#         score.append(sentiment['score'])
+#     tweetdf['label']= label
+#     tweetdf['score']= score
+
+#     tweetdf.date = tweetdf.date.astype('datetime64[ns]','%Y%m%d')
+#     tweet_date_min = tweetdf['date'].min()
+#     tweet_date_max = tweetdf['date'].max()
+def senti(txt, sentiment_task= sentiment_task):
+    x = sentiment_task(txt)[0]
+    l = x['label']
+    s= x['score']
+    return  pd.Series([l,s ])
 
 def get_tweet_sentiment(ticker):
     tweetdf = get_tweetdf(ticker)
-    
-    label = []
-    score= []
-    for i in tweetdf['full_text'].to_list():
-        sentiment = sentiment_task(i)[0]
-        #print(sentiment)
-        label.append(sentiment['label'])
-        score.append(sentiment['score'])
-    tweetdf['label']= label
-    tweetdf['score']= score
-
+    df =tweetdf['full_text'].apply(senti)
+    df.columns = ['label', 'score']
+    tweetdf =  tweetdf.join(df, rsuffix='_right')
+    tweetdf = tweetdf[['date', 'full_text', 'label', 'score']]
+    tweetdf.loc[tweetdf['label']=='Neutral', 'score']*=0.1
+    tweetdf.loc[tweetdf['label']=='Negative', 'score']*=-1
+    tweetdf.loc[tweetdf['label']=='Positive', 'score']*=1
     tweetdf.date = tweetdf.date.astype('datetime64[ns]','%Y%m%d')
     tweet_date_min = tweetdf['date'].min()
     tweet_date_max = tweetdf['date'].max()
-    
-
+    tweetdf = tweetdf.set_index('date')
     return tweetdf,tweet_date_min,tweet_date_max
 
 # for extracting data from finviz
@@ -285,11 +314,11 @@ def sentiment():
     ticker = flask.request.form['ticker'].upper()
 
     tweetdf,tweet_date_min,tweet_date_max = get_tweet_sentiment(ticker)
-    tweetdf = tweetdf[['date', 'full_text', 'label', 'score']]
-    tweetdf.loc[tweetdf['label']=='Neutral', 'score']*=0.1
-    tweetdf.loc[tweetdf['label']=='Negative', 'score']*=-1
-    tweetdf.loc[tweetdf['label']=='Positive', 'score']*=1
-    tweetdf = tweetdf.set_index('date')
+    # tweetdf = tweetdf[['date', 'full_text', 'label', 'score']]
+    # tweetdf.loc[tweetdf['label']=='Neutral', 'score']*=0.1
+    # tweetdf.loc[tweetdf['label']=='Negative', 'score']*=-1
+    # tweetdf.loc[tweetdf['label']=='Positive', 'score']*=1
+    # tweetdf = tweetdf.set_index('date')
 
     
     news_table = get_news(ticker)
@@ -334,5 +363,8 @@ def sentiment():
 
 
 if __name__ == "__main__":
+    
+  
     # tweepyauth()
+    
     app.run(debug=True ,port=8080, host='0.0.0.0')

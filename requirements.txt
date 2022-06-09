@@ -14,7 +14,7 @@ yfinance
 python-dotenv
 transformers[sentencepiece]
 tweepy
-TensorFlow
+#TensorFlow
 google-cloud-bigquery
 google.cloud
 pandas-gbq
