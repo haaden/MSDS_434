@@ -12,9 +12,9 @@ plotly
 Keras>=2.0.8
 yfinance
 python-dotenv
+transformers[torch]
 transformers[sentencepiece]
 tweepy
-#TensorFlow
 google-cloud-bigquery
 google.cloud
 pandas-gbq
